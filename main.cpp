@@ -29,6 +29,7 @@ int main(int argc, const char * argv[])
     map<vector<int>,int> agentAgency; //the map used to store the mapping between variable agentAgency to an integer
     int n_essential_bv = 0;// list all the essential variables which is equal to number of ndoes
 
+
     if(argv[2]==encode)
     {
       string input_graph = argv[1];
@@ -64,6 +65,14 @@ int main(int argc, const char * argv[])
       // printing the populted graph
       // cout<<"printing the given graph"<<endl;
       // PrintGraph(graph);
+      n_essential_bv= nodes_in_graph*subgraphs_in_graph;
+
+      ofstream out_cache_handle;// ("param.cache");
+      out_cache_handle.open ("param.cache");
+      out_cache_handle << "n_essential_bv "<< n_essential_bv<<"\n";
+      out_cache_handle << "nodes_in_graph "<< nodes_in_graph <<"\n";
+      out_cache_handle << "subgraphs_in_graph "<< subgraphs_in_graph <<"\n";
+      out_cache_handle.close();
 
       int edges_in_graph_c = nodes_in_graph*(nodes_in_graph -1)/2 - edges_in_graph;
       for(int v=1; v<nodes_in_graph; v++)
@@ -166,15 +175,32 @@ int main(int argc, const char * argv[])
   {
     ifstream inFileHandle;
     inFileHandle.open("test.satoutput");
+    ifstream in_cache_handle;
+    in_cache_handle.open("param.cache");
     vector<string> subgraphs;
     vector<int> subgraph_size;
     vector<int> agent_agency_bv;
-    // inFileHandle.open("input.graph");
-    if (!inFileHandle)
+    if (!inFileHandle or !in_cache_handle)
     {
-        cerr << "Sat Output file not found";
+        cerr << "Sat Output file or parameter cache of the first run not found";
         exit(2);
     }
+
+    while (getline(in_cache_handle, line))
+    {
+    	vector<string> cache_line = split(line, " ");
+	if (cache_line[0]=="n_essential_bv") n_essential_bv = atoi(cache_line[1].c_str());
+	else if (cache_line[0]=="nodes_in_graph") nodes_in_graph = atoi(cache_line[1].c_str());
+	else if (cache_line[0]=="subgraphs_in_graph") subgraphs_in_graph = atoi(cache_line[1].c_str());
+    }
+    in_cache_handle.close();
+
+    ofstream out_file_handle;// ("test.subgraph");
+    string file_name = argv[1];
+    file_name += ".subgraphs";
+    //out_file_handle.open(argv[1] += ".subgraphs"); //the test.subgraph file name will be provided at runtime
+    out_file_handle.open(file_name); //the test.subgraph file name will be provided at runtime
+
     vector<int> nodes;
     int i=0;
     while (getline(inFileHandle, line))
@@ -185,7 +211,8 @@ int main(int argc, const char * argv[])
             string solution = sat_line[0].c_str();
             if(solution == "UNSAT")
             {
-              cout << 0 <<endl;
+              out_file_handle << 0 <<"\n";
+	      out_file_handle.close();
               break;
             }
         }
@@ -205,20 +232,28 @@ int main(int argc, const char * argv[])
     }
     inFileHandle.close();
 
-    ofstream out_file_handle;// ("test.subgraph");
-    out_file_handle.open(argv[1]); //the test.subgraph file name will be provided at runtime
     //populate the subgraphs
     for(int subs=0; subs < subgraphs_in_graph; subs++ )
     {
       subgraphs.push_back("");
       subgraph_size.push_back(0);
     }
+    int agency;
+    int node; 
     for (int bv=0; bv<n_essential_bv; bv++)
     {
-        int agency = agent_agency_bv[bv]%(subgraphs_in_graph);
-        int node = agent_agency_bv[bv]/subgraphs_in_graph;
-        subgraphs[agency] += to_string(node);
-        subgraph_size[agency] += 1;
+        if(agent_agency_bv[bv] < 0)
+	{
+	   continue;
+	}
+	else
+	{	
+	   agency = (agent_agency_bv[bv] % (subgraphs_in_graph));
+           node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
+           subgraphs[agency] += to_string(node);
+           subgraph_size[agency] += 1;
+	}
+
     }
 
     for(int subs=0; subs < subgraphs_in_graph; subs++ )

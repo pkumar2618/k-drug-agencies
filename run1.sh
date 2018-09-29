@@ -1,3 +1,3 @@
 #!/bin/bash
 FILE1=$1
-./main $FILE1
+./main $FILE1 encode
