@@ -20,7 +20,8 @@ int main(int argc, const char * argv[])
     string line;
     const string encode = "encode"; //flag to use the program to encode the problem in cnf sat format
     const string decode = "decode"; //flag to help take the sat output and decode to give the agencies and there member
-
+    if(argv[2]==encode)
+    { 
     string input_graph = argv[1];
     ifstream inFileHandle;
     int nodes_in_graph = 0;
@@ -159,13 +160,12 @@ int main(int argc, const char * argv[])
         outFileHandle << all_clauses[i] <<"\n";
     }
     outFileHandle.close();
-
+    }
 // reading the sat output file and creating the decoded file
   if(argv[2] == decode)
   {
-    string sat_output = argv[1];
     ifstream inFileHandle;
-    inFileHandle.open(sat_output.c_str());
+    inFileHandle.open("test.satoutput");
     vector<string> subgraphs;
     vector<int> subgraph_size;
     vector<int> agent_agency_bv;
@@ -206,7 +206,7 @@ int main(int argc, const char * argv[])
     inFileHandle.close();
 
     ofstream out_file_handle;// ("test.subgraph");
-    out_file_handle.open ("test.subgraphs");
+    out_file_handle.open(argv[1]); //the test.subgraph file name will be provided at runtime
     //populate the subgraphs
     for(int subs=0; subs < subgraphs_in_graph; subs++ )
     {
