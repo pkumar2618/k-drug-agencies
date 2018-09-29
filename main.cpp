@@ -239,33 +239,36 @@ int main(int argc, const char * argv[])
       subgraph_size.push_back(0);
     }
     int agency;
-    int node; 
+    int node;
     for (int bv=0; bv<n_essential_bv; bv++)
     {
         if(agent_agency_bv[bv] < 0)
-	{
-	   continue;
-	}
-	else
-	{	
-	   agency = (agent_agency_bv[bv] % (subgraphs_in_graph));
-           node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
+      	{
+      	   continue;
+      	}
+      	else
+      	{
+      	   agency = (agent_agency_bv[bv] % (subgraphs_in_graph));
+           if(agency == 0)
+           {
+              node = (agent_agency_bv[bv] / subgraphs_in_graph);
+           }
+           else
+           {
+              node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
+           }
            subgraphs[agency] += to_string(node);
+           subgraphs[agency] += " ";
            subgraph_size[agency] += 1;
-	}
-
+      	}
     }
 
     for(int subs=0; subs < subgraphs_in_graph; subs++ )
     {
-      out_file_handle << "# "<< subgraph_size[subs] <<"\n";
+      out_file_handle << "#"<< subs+1 << " "<< subgraph_size[subs] <<"\n";
       out_file_handle << subgraphs[subs] <<"\n";
     }
     out_file_handle.close();
-
   }
-
-
-//    std::cout << "Hello, World!\n"<<std::endl;
-    return 0;
+  return 0;
 }
