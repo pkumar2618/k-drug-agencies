@@ -192,7 +192,13 @@ int main(int argc, const char * argv[])
 	else if (cache_line[0]=="subgraphs_in_graph") subgraphs_in_graph = atoi(cache_line[1].c_str());
     }
     in_cache_handle.close();
-    vector<vector<int>> subgraphs[subgraphs_in_graph];
+    vector<vector<int>> subgraphs(subgraphs_in_graph);
+    /*cout<<"Printing"<<endl;
+    for(int i=0; i< subgraphs_in_graph; i++)
+	{
+		cout<< subgraphs[i].size()<<endl;
+	}
+	*/
     vector<int> subgraphs_size;
     subgraphs_size.assign(subgraphs_in_graph, 0);
 
@@ -258,7 +264,7 @@ int main(int argc, const char * argv[])
            {
               node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
            }
-           subgraphs[agency].push_back(node);
+           (subgraphs[agency]).push_back(node);
            subgraphs_size[agency] += 1;
       	}
     }
