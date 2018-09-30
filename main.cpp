@@ -177,8 +177,6 @@ int main(int argc, const char * argv[])
     inFileHandle.open("test.satoutput");
     ifstream in_cache_handle;
     in_cache_handle.open("param.cache");
-    vector<string> subgraphs;
-    vector<int> subgraph_size;
     vector<int> agent_agency_bv;
     if (!inFileHandle or !in_cache_handle)
     {
@@ -194,6 +192,9 @@ int main(int argc, const char * argv[])
 	else if (cache_line[0]=="subgraphs_in_graph") subgraphs_in_graph = atoi(cache_line[1].c_str());
     }
     in_cache_handle.close();
+    vector<vector<int>> subgraphs[subgraphs_in_graph];
+    vector<int> subgraphs_size;
+    subgraphs_size.assign(subgraphs_in_graph, 0);
 
     ofstream out_file_handle;// ("test.subgraph");
     string file_name = argv[1];
@@ -233,11 +234,11 @@ int main(int argc, const char * argv[])
     inFileHandle.close();
 
     //populate the subgraphs
-    for(int subs=0; subs < subgraphs_in_graph; subs++ )
-    {
-      subgraphs.push_back("");
-      subgraph_size.push_back(0);
-    }
+    //for(int subs=0; subs < subgraphs_in_graph; subs++ )
+    //{
+      //subgraphs.push_back("");
+      //subgraph_size.push_back(0);
+    //}
     int agency;
     int node;
     for (int bv=0; bv<n_essential_bv; bv++)
@@ -257,16 +258,25 @@ int main(int argc, const char * argv[])
            {
               node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
            }
-           subgraphs[agency] += to_string(node);
-           subgraphs[agency] += " ";
-           subgraph_size[agency] += 1;
+           subgraphs[agency].push_back(node);
+           subgraphs_size[agency] += 1;
       	}
     }
 
     for(int subs=0; subs < subgraphs_in_graph; subs++ )
     {
-      out_file_handle << "#"<< subs+1 <<" "<< subgraph_size[subs] <<endl;
-      out_file_handle << subgraphs[subs].c_str() <<endl;
+      	out_file_handle << "#"<< subs+1 <<" "<< subgraphs_size[subs] <<endl;
+      	for (int k=0; k< subgraphs_size[subs]; k++)
+	      {
+	         if(k<subgraphs_size[subs]-1)
+	         {
+	            out_file_handle << subgraphs[subs][k] <<" ";
+           }
+	         else
+	         {
+	            out_file_handle << subgraphs[subs][k] <<endl;
+           }
+	      }
     }
     out_file_handle.close();
   }
