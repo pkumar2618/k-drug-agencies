@@ -265,8 +265,8 @@ int main(int argc, const char * argv[])
 
     for(int subs=0; subs < subgraphs_in_graph; subs++ )
     {
-      out_file_handle << "#"<< subs+1 << " "<< subgraph_size[subs] <<"\n";
-      out_file_handle << subgraphs[subs] <<"\n";
+      out_file_handle << "#"<< subs+1 <<" "<< subgraph_size[subs] <<endl;
+      out_file_handle << subgraphs[subs].c_str() <<endl;
     }
     out_file_handle.close();
   }
