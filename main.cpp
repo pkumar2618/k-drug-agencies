@@ -33,6 +33,7 @@ int main(int argc, const char * argv[])
     if(argv[2]==encode)
     {
       string input_graph = argv[1];
+      input_graph += ".graph";
       ifstream inFileHandle;
       inFileHandle.open(input_graph.c_str());
       // inFileHandle.open("input.graph");
@@ -142,16 +143,44 @@ int main(int argc, const char * argv[])
       }
 
       // agencies are not strict subsidiary of another agency
-      for (int k=1; k<agencies; k++)
+      // there exist an agent who doesn't belong to two agencies. 
+      /*for (int k=1; k<agencies; k++)
       {
           for (int next_k=k+1; next_k<=agencies; next_k++)
           {
               vector<int> key = {k,next_k};
               cnf_for_or_over_agents(key, nodes_in_graph, n_essential_bv, &agentAgency, &extra_bv_sat_code, &all_clauses);
           }
+      }*/
+     // there exist an agent who is extra when compared aginst all other agencies
+     //
+      for (int k=1; k<=agencies; k++)
+      {
+          for (int next_k=1; next_k<=agencies ; next_k++)
+          {
+		if (next_k==k) continue;
+		else
+		{
+		
+              		vector<int> key = {k,next_k};
+              		cnf_for_or_over_agents_extra_member(key, nodes_in_graph, n_essential_bv, &agentAgency, &extra_bv_sat_code, &all_clauses);
+		}
+          }
       }
 
      //
+     //agency must have atleast one agent
+      for (int k=1; k<=agencies; k++)
+      {
+              string clause; 
+      	for(int n=1; n <= nodes_in_graph; n++)
+          {
+              clause += to_string(agentAgency[{n,k}]);
+              clause += " ";
+          }
+              clause += to_string(0);
+              all_clauses.push_back(clause);
+      }
 
       //////////
       // cout<<"printing the total clauses formed on the output file "<<endl;
@@ -210,6 +239,7 @@ int main(int argc, const char * argv[])
 
     vector<int> nodes;
     int i=0;
+    int flag_decode = false;
     while (getline(inFileHandle, line))
     {
         vector<string> sat_line = split(line," ");
@@ -230,6 +260,7 @@ int main(int argc, const char * argv[])
           {
               agent_agency_bv.push_back(atoi(sat_line[bv].c_str()));
           }
+	  flag_decode = true;
         }
         else
         {
@@ -247,6 +278,8 @@ int main(int argc, const char * argv[])
     //}
     int agency;
     int node;
+    if(flag_decode == true)
+    {
     for (int bv=0; bv<n_essential_bv; bv++)
     {
         if(agent_agency_bv[bv] < 0)
@@ -285,6 +318,8 @@ int main(int argc, const char * argv[])
 	      }
     }
     out_file_handle.close();
+    flag_decode = false;
+    }
   }
   return 0;
 }

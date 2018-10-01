@@ -21,6 +21,7 @@ void cnf_for_or_over_agencies(vector<int> edge, int agencies, int n_essential_bv
 // the following function call is made to get the cnf for condtion that no to agencies are strict subsidiary of
 // each other
 void cnf_for_or_over_agents(vector<int> agency_pairs, int agents, int n_essential_bv, map<vector<int>,int>* ptr_agentAgency, map<int,int>* ptr_extra_bv_sat_code, vector<string>* ptr_all_clauses);
+void cnf_for_or_over_agents_extra_member(vector<int> agency_pairs, int agents, int n_essential_bv, map<vector<int>,int>* ptr_agentAgency, map<int,int>* ptr_extra_bv_sat_code, vector<string>* ptr_all_clauses);
 vector<string> split(string message, string delimiter);
 void PrintGraph(map<vector<int>,int> graph);
 void PrintGraph(map<vector<int>,int> graph, bool val);
