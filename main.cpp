@@ -143,7 +143,7 @@ int main(int argc, const char * argv[])
       }
 
       // agencies are not strict subsidiary of another agency
-      // there exist an agent who doesn't belong to two agencies. 
+      // there exist an agent who doesn't belong to two agencies.
       /*for (int k=1; k<agencies; k++)
       {
           for (int next_k=k+1; next_k<=agencies; next_k++)
@@ -158,13 +158,13 @@ int main(int argc, const char * argv[])
       {
           for (int next_k=1; next_k<=agencies ; next_k++)
           {
-		if (next_k==k) continue;
-		else
-		{
-		
+		          if (next_k==k) continue;
+		          else
+		          {
+
               		vector<int> key = {k,next_k};
               		cnf_for_or_over_agents_extra_member(key, nodes_in_graph, n_essential_bv, &agentAgency, &extra_bv_sat_code, &all_clauses);
-		}
+		          }
           }
       }
 
@@ -172,12 +172,12 @@ int main(int argc, const char * argv[])
      //agency must have atleast one agent
       for (int k=1; k<=agencies; k++)
       {
-              string clause; 
-      	for(int n=1; n <= nodes_in_graph; n++)
-          {
-              clause += to_string(agentAgency[{n,k}]);
-              clause += " ";
-          }
+              string clause;
+      	      for(int n=1; n <= nodes_in_graph; n++)
+              {
+                  clause += to_string(agentAgency[{n,k}]);
+                  clause += " ";
+              }
               clause += to_string(0);
               all_clauses.push_back(clause);
       }
@@ -216,9 +216,9 @@ int main(int argc, const char * argv[])
     while (getline(in_cache_handle, line))
     {
     	vector<string> cache_line = split(line, " ");
-	if (cache_line[0]=="n_essential_bv") n_essential_bv = atoi(cache_line[1].c_str());
-	else if (cache_line[0]=="nodes_in_graph") nodes_in_graph = atoi(cache_line[1].c_str());
-	else if (cache_line[0]=="subgraphs_in_graph") subgraphs_in_graph = atoi(cache_line[1].c_str());
+    	if (cache_line[0]=="n_essential_bv") n_essential_bv = atoi(cache_line[1].c_str());
+    	else if (cache_line[0]=="nodes_in_graph") nodes_in_graph = atoi(cache_line[1].c_str());
+    	else if (cache_line[0]=="subgraphs_in_graph") subgraphs_in_graph = atoi(cache_line[1].c_str());
     }
     in_cache_handle.close();
     vector<vector<int>> subgraphs(subgraphs_in_graph);
@@ -249,7 +249,7 @@ int main(int argc, const char * argv[])
             if(solution == "UNSAT")
             {
               out_file_handle << 0 <<"\n";
-	      out_file_handle.close();
+	            out_file_handle.close();
               break;
             }
         }
@@ -260,7 +260,7 @@ int main(int argc, const char * argv[])
           {
               agent_agency_bv.push_back(atoi(sat_line[bv].c_str()));
           }
-	  flag_decode = true;
+	        flag_decode = true;
         }
         else
         {
@@ -280,43 +280,43 @@ int main(int argc, const char * argv[])
     int node;
     if(flag_decode == true)
     {
-    for (int bv=0; bv<n_essential_bv; bv++)
-    {
-        if(agent_agency_bv[bv] < 0)
-      	{
-      	   continue;
-      	}
-      	else
-      	{
-      	   agency = (agent_agency_bv[bv] % (subgraphs_in_graph));
-           if(agency == 0)
-           {
-              node = (agent_agency_bv[bv] / subgraphs_in_graph);
-           }
-           else
-           {
-              node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
-           }
-           (subgraphs[agency]).push_back(node);
-           subgraphs_size[agency] += 1;
-      	}
-    }
+      for (int bv=0; bv<n_essential_bv; bv++)
+      {
+          if(agent_agency_bv[bv] < 0)
+        	{
+        	   continue;
+        	}
+        	else
+        	{
+        	   agency = (agent_agency_bv[bv] % (subgraphs_in_graph));
+             if(agency == 0)
+             {
+                node = (agent_agency_bv[bv] / subgraphs_in_graph);
+             }
+             else
+             {
+                node = (agent_agency_bv[bv] / subgraphs_in_graph) + 1;
+             }
+             (subgraphs[agency]).push_back(node);
+             subgraphs_size[agency] += 1;
+        	}
+      }
 
-    for(int subs=0; subs < subgraphs_in_graph; subs++ )
-    {
-      	out_file_handle << "#"<< subs+1 <<" "<< subgraphs_size[subs] <<endl;
-      	for (int k=0; k< subgraphs_size[subs]; k++)
-	      {
-	         if(k<subgraphs_size[subs]-1)
-	         {
-	            out_file_handle << subgraphs[subs][k] <<" ";
-           }
-	         else
-	         {
-	            out_file_handle << subgraphs[subs][k] <<endl;
-           }
-	      }
-    }
+      for(int subs=0; subs < subgraphs_in_graph; subs++ )
+      {
+        	out_file_handle << "#"<< subs+1 <<" "<< subgraphs_size[subs] <<endl;
+        	for (int k=0; k< subgraphs_size[subs]; k++)
+  	      {
+  	         if(k<subgraphs_size[subs]-1)
+  	         {
+  	            out_file_handle << subgraphs[subs][k] <<" ";
+             }
+  	         else
+  	         {
+  	            out_file_handle << subgraphs[subs][k] <<endl;
+             }
+  	      }
+      }
     out_file_handle.close();
     flag_decode = false;
     }
